@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}中创证券 - 对话{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="message-avatar pet-icon"></div>
+        <div>
+            <div class="chat-title">Teddy — 智能客服助手</div>
+            <div class="chat-subtitle">在线 · 7x24小时为您服务</div>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            <div id="petAvatar" class="pet-avatar-inline"></div>
+            <div class="message-bubble">
+                您好！我是中创证券智能客服助手 💼<br>
+                可以问我关于<span class="highlight">开户流程、交易规则、手续费、创业板/科创板开通</span>等业务问题，请问有什么可以帮您的？
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <div class="chat-input-row">
+            <input type="text" id="messageInput" placeholder="输入您的问题..." autocomplete="off" />
+            <button id="sendBtn" class="btn-send">发送</button>
+        </div>
+        <div class="chat-hints">
+            <span class="hint" data-hint="创业板怎么开通？">创业板怎么开通？</span>
+            <span class="hint" data-hint="A股交易手续费怎么收？">A股交易手续费</span>
+            <span class="hint" data-hint="忘记密码怎么办？">忘记密码怎么办？</span>
+            <span class="hint" data-hint="科创板开通条件是什么？">科创板开通条件</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<script src="/static/pet.js"></script>
+<script src="/static/chat.js"></script>
+{% endblock %}

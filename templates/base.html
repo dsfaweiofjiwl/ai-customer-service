@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}中创证券 - 智能客服{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">中创证券智能客服</div>
+        <div class="nav-links">
+            <div class="nav-dropdown">
+                <button class="nav-link nav-dropdown-btn" id="chatNavBtn">💬 对话 ▾</button>
+                <div class="nav-dropdown-menu" id="chatDropdown">
+                    <div class="dropdown-item new-chat" id="btnNewChat">＋ 开启新对话</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-sessions" id="sessionList">
+                        <div class="dropdown-item placeholder">加载中...</div>
+                    </div>
+                </div>
+            </div>
+            <a href="/admin" class="nav-link">📚 知识库</a>
+        </div>
+    </nav>
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

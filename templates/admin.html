@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}中创证券 - 知识库管理{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <a href="/" class="back-link">← 返回对话</a>
+    <div class="admin-header">
+        <h2>📚 知识库管理</h2>
+        <div class="admin-stats">
+            <span id="chunkCount">加载中...</span>
+        </div>
+    </div>
+
+    <div class="upload-area">
+        <h3>上传新知识</h3>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-row">
+                <input type="file" id="fileInput" accept=".md,.json,.txt" />
+                <button type="submit" class="btn-upload">上传</button>
+            </div>
+            <p class="upload-hint">支持 Markdown (.md)、JSON (.json)、文本 (.txt) 格式</p>
+        </form>
+        <div id="uploadStatus"></div>
+    </div>
+
+    <div class="files-area">
+        <h3>知识库文件</h3>
+        <table class="files-table" id="filesTable">
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>大小</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="3" class="loading">加载中...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+async function loadFiles() {
+    try {
+        const resp = await fetch('/admin/kb/list');
+        const data = await resp.json();
+        document.getElementById('chunkCount').textContent = `共 ${data.total_chunks} 条知识块`;
+        const tbody = document.querySelector('#filesTable tbody');
+        if (data.files.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="loading">暂无知识文件</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.files.map(f => `
+            <tr>
+                <td>📄 ${f.name}</td>
+                <td>${(f.size / 1024).toFixed(1)} KB</td>
+                <td><button class="btn-delete" onclick="deleteFile('${f.name}')">删除</button></td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function deleteFile(name) {
+    if (!confirm(`确定删除 ${name}？`)) return;
+    await fetch(`/admin/kb/${name}`, { method: 'DELETE' });
+    loadFiles();
+}
+
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const status = document.getElementById('uploadStatus');
+    status.textContent = '上传中...';
+    status.className = '';
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const resp = await fetch('/admin/kb/upload', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.ok) {
+            status.textContent = `✅ ${file.name} 上传成功，共 ${data.total_chunks} 条知识块`;
+            status.className = 'status-ok';
+            fileInput.value = '';
+            loadFiles();
+        } else {
+            status.textContent = `❌ ${data.error}`;
+            status.className = 'status-error';
+        }
+    } catch (err) {
+        status.textContent = `❌ 上传失败: ${err.message}`;
+        status.className = 'status-error';
+    }
+});
+
+loadFiles();
+</script>
+{% endblock %}
